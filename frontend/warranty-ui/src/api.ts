@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://127.0.0.1:5000';
+// Connect to whoever served this file (e.g. 10.121.47.132), but on port 5000
+const API_BASE_URL = `http://${window.location.hostname}:5000`;
 
 export const api = {
   async register(username: string, password: string) {

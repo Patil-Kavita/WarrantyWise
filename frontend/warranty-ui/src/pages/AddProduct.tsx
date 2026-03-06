@@ -9,8 +9,9 @@ export const AddProduct: React.FC = () => {
   const navigate = useNavigate();
 
   const handleAddProduct = async (productData: any) => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
+    let userId = localStorage.getItem('userId');
+    if (!userId || userId === 'undefined' || userId === 'null') {
+      localStorage.removeItem('userId'); // Clear corrupted state
       alert('You must be logged in to add a product.');
       navigate('/login');
       return;

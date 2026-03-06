@@ -20,12 +20,12 @@ export const Login: React.FC = () => {
         const data = await api.register(username, password);
         if (data.error) return alert(data.error);
         alert('Registered successfully! Logging you in...');
-        localStorage.setItem('userId', data.user.id);
+        localStorage.setItem('userId', data.user.id.toString());
         navigate('/');
       } else {
         const data = await api.login(username, password);
         if (data.error) return alert(data.error);
-        localStorage.setItem('userId', data.user_id);
+        localStorage.setItem('userId', data.user.id.toString());
         navigate('/');
       }
     } catch (err) {

@@ -11,42 +11,34 @@ This is the Flask backend for WarrantyWise. It provides a RESTful API for managi
 
 ## Setup Instructions
 
-1. **Navigate to the backend directory:**
+1. **Navigate to the Root Directory:**
+   Our project is configured as a monolithic workspace. Navigate to the base route folder: `D:\WarrantyWise`
+
+2. **Initialize python environment (Only required on first clone)**:
    ```bash
    cd backend
-   ```
-
-2. **Create a virtual environment:**
-   ```bash
-   python -m venv venv
-   ```
-
-3. **Activate the virtual environment:**
-   - On Windows:
-     ```bash
-     venv\Scripts\activate
-     ```
-   - On macOS/Linux:
-     ```bash
-     source venv/bin/activate
-     ```
-
-4. **Install dependencies:**
-   ```bash
+   python -m venv backend-vev
+   backend-vev\Scripts\activate
    pip install -r requirements.txt
-   ```
-
-5. **Initialize Database:**
-   ```bash
    python init_db.py
+   cd ..
    ```
 
-6. **Run the Flask application:**
-   You can run the app using the `run.py` script:
+3. **Install Frontend packages (Only required on first clone)**:
    ```bash
-   python run.py
+   cd frontend/warranty-ui
+   npm install
+   cd ../..
    ```
-   The API will be available at `http://127.0.0.1:5000/` (and on your local network IP for mobile connections).
+
+4. **Launch the Full Application Core**:
+   Because `concurrently` is installed in the workspace root `package.json`, you can launch both servers simultaneously:
+   ```bash
+   npm run start
+   ```
+
+   - **Frontend URL**: `http://localhost:3000/` (Also accessible dynamically via your LAN IP for mobile devices)
+   - **Backend API URL**: `http://127.0.0.1:5000/`
 
 ## API Documentation
 

@@ -19,7 +19,7 @@ timeout /t 5 /nobreak > nul
 
 echo [3/3] Opening Frontend in Chrome...
 :: Use the start command to launch Chrome specifically and point it to the Vite dev server URL.
-start chrome "http://localhost:5173"
+start chrome "http://localhost:3000"
 
 echo.
 echo ===========================================

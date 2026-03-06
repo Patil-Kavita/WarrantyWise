@@ -15,8 +15,9 @@ export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
+    let userId = localStorage.getItem('userId');
+    if (!userId || userId === 'undefined' || userId === 'null') {
+      localStorage.removeItem('userId'); // Clear corrupted state
       navigate('/login');
       return;
     }
