@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
 from app.models import User, Item
 from app import db
-
-bp = Blueprint('api', __name__, url_prefix='/api')
-
+# We remove the url_prefix so routes are available at the root URL as requested
+bp = Blueprint('api', __name__)
 @bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()

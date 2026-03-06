@@ -46,16 +46,16 @@ This is the Flask backend for WarrantyWise. It provides a RESTful API for managi
    ```bash
    python run.py
    ```
-   The API will be available at `http://127.0.0.1:5000/api/` (and on your local network IP for mobile connections).
+   The API will be available at `http://127.0.0.1:5000/` (and on your local network IP for mobile connections).
 
 ## API Documentation
 
-All endpoints are prefixed with `/api` and expect/return JSON.
+All endpoints expect/return JSON.
 
 ### Authentication
 
 #### 1. Register a New User
-- **URL**: `/api/register`
+- **URL**: `/register`
 - **Method**: `POST`
 - **What it does**: Creates a new user account with hashed passwords.
 - **Request Body (JSON)**:
@@ -77,7 +77,7 @@ All endpoints are prefixed with `/api` and expect/return JSON.
   ```
 
 #### 2. Log in User
-- **URL**: `/api/login`
+- **URL**: `/login`
 - **Method**: `POST`
 - **What it does**: Validates credentials and returns the user's ID to be saved by the frontend.
 - **Request Body (JSON)**:
@@ -101,7 +101,7 @@ All endpoints are prefixed with `/api` and expect/return JSON.
 ### Items (Core Functionality)
 
 #### 3. Add a New Warranty Item
-- **URL**: `/api/add-item`
+- **URL**: `/add-item`
 - **Method**: `POST`
 - **What it does**: Saves a new warranty item linked to the logged-in user.
 - **Request Body (JSON)**:
@@ -126,10 +126,10 @@ All endpoints are prefixed with `/api` and expect/return JSON.
   ```
 
 #### 4. Get User's Items
-- **URL**: `/api/items/<user_id>`
+- **URL**: `/items/<user_id>`
 - **Method**: `GET`
 - **What it does**: Retrieves all tracked items for a specific user ID.
-- **Request URL Example**: `/api/items/1`
+- **Request URL Example**: `/items/1`
 - **Success Response (200 OK)**: Returns a JSON array of item objects.
   ```json
   [
