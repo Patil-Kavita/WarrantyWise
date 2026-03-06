@@ -21,7 +21,7 @@ def create_app(config_class=Config):
 
         app.register_blueprint(routes.bp)
 
-        # Create database tables for our data models
-        db.create_all()
+        # Note: We now use init_db.py to create tables manually instead of doing it on every run
+        # db.create_all()
 
     return app
