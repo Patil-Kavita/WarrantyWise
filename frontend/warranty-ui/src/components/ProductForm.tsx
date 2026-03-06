@@ -1,27 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { InputField } from './InputField';
 import { Button } from './Button';
 import { FiHash, FiTag, FiCalendar, FiBox } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
-export const ProductForm: React.FC = () => {
+export const ProductForm = ({ onSubmit }: { onSubmit?: (data: any) => void }) => {
   const navigate = useNavigate();
+  const [name, setName] = useState('');
+  const [purchaseDate, setPurchaseDate] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onSubmit) {
+      onSubmit({ name, purchaseDate, expiryDate });
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8">
-      <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); navigate('/'); }}>
+      <form className="space-y-6" onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 flex-wrap">
           <InputField 
             label="Product Name" 
             placeholder="e.g. MacBook Pro M2" 
             icon={<FiBox />} 
             required 
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
           <InputField 
             label="Product ID / Serial Number" 
             placeholder="SN-123456789" 
             icon={<FiHash />} 
-            required 
+            required={false}
           />
           
           <div className="flex flex-col w-full">
@@ -31,10 +45,10 @@ export const ProductForm: React.FC = () => {
                 <FiTag size={18} />
               </div>
               <select 
-                required
+                defaultValue=""
                 className="w-full pl-10 pr-10 py-2.5 border border-slate-200 hover:border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-white appearance-none cursor-pointer shadow-sm text-slate-800 font-medium"
               >
-                <option value="" disabled selected>Select a category</option>
+                <option value="" disabled>Select a category</option>
                 <option value="electronics">Electronics</option>
                 <option value="appliances">Appliances</option>
                 <option value="furniture">Furniture</option>
@@ -53,12 +67,16 @@ export const ProductForm: React.FC = () => {
             type="date" 
             icon={<FiCalendar />} 
             required 
+            value={purchaseDate}
+            onChange={(e) => setPurchaseDate(e.target.value)}
           />
           <InputField 
             label="Warranty End Date" 
             type="date" 
             icon={<FiCalendar />} 
             required 
+            value={expiryDate}
+            onChange={(e) => setExpiryDate(e.target.value)}
           />
         </div>
 

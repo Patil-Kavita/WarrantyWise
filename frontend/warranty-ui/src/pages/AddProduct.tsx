@@ -1,9 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navbar } from '../components/Navbar';
 import { ProductForm } from '../components/ProductForm';
 import { FiInfo } from 'react-icons/fi';
+import { api } from '../api';
+import { useNavigate } from 'react-router-dom';
 
 export const AddProduct: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleAddProduct = async (productData: any) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('You must be logged in to add a product.');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const data = await api.addItem(
+        parseInt(userId),
+        productData.name, 
+        productData.expiryDate || productData.purchaseDate // Fallback if no expiry picked
+      );
+      if (data.error) throw new Error(data.error);
+      alert('Product saved successfully!');
+      navigate('/');
+    } catch (err) {
+      alert('Error saving product to backend.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50/50">
       <Navbar />
@@ -16,7 +42,7 @@ export const AddProduct: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2">
-            <ProductForm />
+            <ProductForm onSubmit={handleAddProduct} />
           </div>
           
           <div className="lg:col-span-1">

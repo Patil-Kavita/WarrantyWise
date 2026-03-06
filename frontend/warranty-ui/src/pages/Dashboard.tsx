@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { StatCard } from '../components/StatCard';
 import { ProductCard } from '../components/ProductCard';
@@ -7,23 +7,52 @@ import { Button } from '../components/Button';
 import type { Product } from '../types';
 import { FiBox, FiCheckCircle, FiClock, FiAlertTriangle, FiPlus } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-
-const MOCK_PRODUCTS: Product[] = [
-  { id: 'SN-847362', name: 'MacBook Pro M2', category: 'electronics', purchaseDate: '2023-01-15', expiryDate: '2026-01-15', status: 'Active' },
-  { id: 'SN-192837', name: 'Samsung 4K TV', category: 'appliances', purchaseDate: '2021-11-20', expiryDate: '2023-11-20', status: 'Expired' },
-  { id: 'SN-564738', name: 'Sony PlayStation 5', category: 'electronics', purchaseDate: '2022-05-10', expiryDate: '2025-05-10', status: 'Active' },
-  { id: 'SN-918273', name: 'Dyson V15 Vacuum', category: 'appliances', purchaseDate: '2024-02-05', expiryDate: '2026-02-05', status: 'Active' },
-];
+import { api } from '../api';
 
 export const Dashboard: React.FC = () => {
   const [filter, setFilter] = useState<'All' | 'Active' | 'Expiring' | 'Expired'>('All');
+  const [products, setProducts] = useState<Product[]>([]);
   const navigate = useNavigate();
 
-  const filteredProducts = MOCK_PRODUCTS.filter(p => {
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      navigate('/login');
+      return;
+    }
+
+    const loadItems = async () => {
+      try {
+        const data = await api.getItems(parseInt(userId));
+        if (data.error) throw new Error(data.error);
+
+        // Map backend schema to frontend Product schema
+        const mappedProducts = data.map((item: any) => ({
+          id: item.id.toString(),
+          name: item.item_name,
+          category: 'electronics', // Defaulting as category isn't in backend yet
+          purchaseDate: item.expiry_date, // Using expiry_date as proxy for now
+          expiryDate: item.expiry_date,
+          status: new Date(item.expiry_date) > new Date() ? 'Active' : 'Expired'
+        }));
+        setProducts(mappedProducts);
+      } catch (err) {
+        console.error("Failed to fetch items", err);
+      }
+    };
+    loadItems();
+  }, [navigate]);
+
+  const filteredProducts = products.filter(p => {
     if (filter === 'All') return true;
-    if (filter === 'Expiring') return p.status === 'Active'; // Mock logic for expiring
+    if (filter === 'Expiring') return p.status === 'Active';
     return p.status === filter;
   });
+
+  // Calculate dynamic stats
+  const totalCount = products.length;
+  const activeCount = products.filter(p => p.status === 'Active').length;
+  const expiredCount = products.filter(p => p.status === 'Expired').length;
 
   return (
     <div className="min-h-screen bg-slate-50/50">
@@ -31,10 +60,10 @@ export const Dashboard: React.FC = () => {
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard title="Total Products" value="12" icon={<FiBox size={24} />} colorType="blue" />
-          <StatCard title="Active" value="8" icon={<FiCheckCircle size={24} />} colorType="green" />
-          <StatCard title="Expiring Soon" value="2" icon={<FiClock size={24} />} colorType="yellow" />
-          <StatCard title="Expired" value="2" icon={<FiAlertTriangle size={24} />} colorType="red" />
+          <StatCard title="Total Products" value={totalCount.toString()} icon={<FiBox size={24} />} colorType="blue" />
+          <StatCard title="Active" value={activeCount.toString()} icon={<FiCheckCircle size={24} />} colorType="green" />
+          <StatCard title="Expiring Soon" value="0" icon={<FiClock size={24} />} colorType="yellow" />
+          <StatCard title="Expired" value={expiredCount.toString()} icon={<FiAlertTriangle size={24} />} colorType="red" />
         </div>
 
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-100">

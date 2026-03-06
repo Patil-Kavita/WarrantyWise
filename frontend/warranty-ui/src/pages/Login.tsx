@@ -4,13 +4,33 @@ import { InputField } from '../components/InputField';
 import { Button } from '../components/Button';
 import { useNavigate } from 'react-router-dom';
 
+import { api } from '../api';
+
 export const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/');
+    try {
+      if (isRegistering) {
+        const data = await api.register(username, password);
+        if (data.error) return alert(data.error);
+        alert('Registered successfully! Logging you in...');
+        localStorage.setItem('userId', data.user.id);
+        navigate('/');
+      } else {
+        const data = await api.login(username, password);
+        if (data.error) return alert(data.error);
+        localStorage.setItem('userId', data.user_id);
+        navigate('/');
+      }
+    } catch (err) {
+      alert('Could not connect to the backend server. Is it running?');
+    }
   };
 
   return (
@@ -26,14 +46,15 @@ export const Login: React.FC = () => {
           <p className="text-slate-500 text-center text-sm">Sign in to manage your warranties</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-5">
+        <form onSubmit={handleAuth} className="space-y-5">
           <InputField 
-            type="email"
-            label="Email"
-            placeholder="you@example.com"
+            type="text"
+            label="Username"
+            placeholder="johndoe"
             icon={<FiMail />}
             required
-            autoComplete="email"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           
           <div className="relative">
@@ -43,6 +64,8 @@ export const Login: React.FC = () => {
               placeholder="••••••••"
               icon={<FiLock />}
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button 
               type="button"
@@ -64,15 +87,15 @@ export const Login: React.FC = () => {
           </div>
 
           <Button type="submit" fullWidth className="py-2.5 mt-4 text-sm tracking-wide">
-            Sign In
+            {isRegistering ? 'Create Account' : 'Sign In'}
           </Button>
         </form>
 
         <div className="mt-8 pt-6 border-t border-slate-100 text-center text-sm text-slate-500">
-          Don't have an account?{' '}
-          <a href="#" className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-            Create one now
-          </a>
+          {isRegistering ? 'Already have an account?' : "Don't have an account?"}{' '}
+          <button type="button" onClick={() => setIsRegistering(!isRegistering)} className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+            {isRegistering ? 'Sign In' : 'Create one now'}
+          </button>
         </div>
       </div>
     </div>
